@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "solomon"
+version = "0.2.0"
+description = "Cross-Platform System Diagnostics, Security Auditing, Pentesting Support and Safe Hardening Framework."
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "textual>=8.0,<9",
+    "psutil>=7.0,<8",
+    "dnspython>=2.8,<3",
+]
+
+[project.scripts]
+solomon = "solomon.__main__:main"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "ruff>=0.1.0",
+    "mypy>=1.8.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "N"]
+ignore = []
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-m 'not integration'"
+markers = ["integration: laboratório de rede exclusivamente em loopback"]

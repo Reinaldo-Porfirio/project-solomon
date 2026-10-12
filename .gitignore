@@ -1,0 +1,62 @@
+# Python environments and installed/generated dependencies
+.venv/
+venv/
+env/
+ENV/
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+build/
+dist/
+
+# Tests, static analysis and coverage
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+.tox/
+.nox/
+
+# Real security assessments and local backups: never publish
+reports/
+engagements/
+evidence/
+artifacts/
+.solomon-backups/
+*.log
+*.pcap
+*.pcapng
+*.sqlite
+*.sqlite3
+*.db
+*.zip
+*.tar
+*.tar.gz
+
+# Credentials, environment files and private keys
+.env
+.env.*
+*.env
+.envrc
+credentials*.json
+secrets*.json
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+*.kdbx
+id_rsa*
+id_ed25519*
+
+# Editor and operating-system local data
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+Desktop.ini
