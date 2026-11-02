@@ -1,99 +1,125 @@
-# Project Solomon — 0.2.0
+# Project Solomon
 
-Framework Python para **pentest autorizado, auditoria local e documentação de falhas**, com prioridade para Windows. Não usa IA, APIs comerciais, assinaturas, telemetria ou serviços pagos.
+![Python](https://img.shields.io/badge/python-3.12%2B-blue)
+![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux-lightgrey)
+![Tests](https://img.shields.io/badge/tests-89%20passing-brightgreen)
+![License](https://img.shields.io/badge/license-MIT-green)
 
-## Começar no Windows
+Windows-first Python framework for **authorized penetration testing, read-only local security audits and evidence-based vulnerability reporting**. No AI, commercial APIs, subscriptions, telemetry or paid services.
 
-Python 3.12 ou superior e PowerShell. Não precisa de WSL, Docker, Nmap ou administrador para iniciar.
+> 🇧🇷 [Leia em português](README.pt-BR.md)
 
-Instale as dependências gratuitas na primeira utilização:
+> [!IMPORTANT]
+> Solomon is meant for systems you own or are explicitly authorized to test. Every network operation is checked against a declared scope, and nothing leaves the machine until an engagement is marked as authorized.
+
+## Highlights
+
+- **Scope enforcement by design**: domains, wildcards, exact URLs, IPs and CIDRs, with exclusions, time windows, allowed ports and allowed operations. Out-of-scope or unauthorized targets are blocked before any socket is opened.
+- **Safe networking**: shared rate, concurrency and request-budget limits; verified HTTPS; every redirect re-checked against scope; resolved IPs checked against exclusions and private ranges (DNS-rebinding aware).
+- **Evidence-based findings**: each finding carries evidence, confidence, impact, rationale, reproduction steps, remediation, limitations, references and SHA-256 hashes. Tampered evidence is rejected on re-analysis.
+- **Conservative rules**: an open port, an announced version or an inconclusive response is never reported as a vulnerability.
+- **Local diagnostics (read-only)**: CPU, memory, storage, processes, interfaces, sockets, services, routes and firewall profiles on Windows, with Ubuntu providers.
+- **Reports**: self-contained HTML (no external resources), Markdown for bug bounty write-ups and JSON for offline re-analysis.
+- **CLI and TUI** (Textual), with offline planning and per-module commands for DNS, HTTP, TLS, ports and CORS.
+
+## Quick start (Windows)
+
+Requires Python 3.12+ and PowerShell. No WSL, Docker, Nmap or admin rights needed.
 
 ```powershell
+git clone https://github.com/Reinaldo-Porfirio/project-solomon.git
+cd project-solomon
 powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\setup-windows.ps1
-```
-
-A opção Bypass vale somente para esse processo. O instalador não altera a política permanente do Windows, o firewall, serviços ou permissões.
-
-Depois, confira o estado e abra a interface:
-
-```powershell
 .\solomon.cmd status
-.\solomon.cmd
+.\solomon.cmd          # opens the TUI
 ```
 
-Abrir a aplicação **não inicia testes remotos**. O diagnóstico local usa somente leitura e executa em segundo plano. O ambiente virtual não faz parte do repositório.
+`-ExecutionPolicy Bypass` applies only to that process. The installer does not change system policy, firewall, services or permissions. Opening the app does **not** start any remote test.
 
-## Ver o fluxo funcionando sem testar terceiros
+Other platforms (manual install):
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -e .
+solomon status
+```
+
+## See it working without touching third parties
 
 ```powershell
 .\solomon.cmd demo
 ```
 
-A demonstração cria um servidor temporário em **127.0.0.1**, define um escopo exclusivo para ele, coleta HTTP, tecnologia, uma porta e duas sondagens CORS. Gera relatórios JSON, HTML e Markdown em `reports/local-demo/SESS-*/` e encerra o servidor. Os dados são fictícios.
+The demo starts a temporary server on **127.0.0.1**, creates a scope restricted to it, collects HTTP, technology, one port and two CORS probes, writes JSON/HTML/Markdown reports to `reports/local-demo/SESS-*/` and shuts the server down. All data is fictitious.
 
-## Pentest de um alvo autorizado
+Sample output (the CLI and reports are currently in Portuguese):
 
-Crie um arquivo de engagement com os ativos realmente autorizados:
-
-```powershell
-.\solomon.cmd pentest init --engagement engagements\programa.json --name "Meu programa" --include "https://alvo-autorizado.invalid/" --authorize --authorization-reference "Documento ou politica de autorizacao"
-.\solomon.cmd pentest plan "https://alvo-autorizado.invalid/" --engagement engagements\programa.json --modules HTTP,TLS,TECHNOLOGY
-.\solomon.cmd pentest scan "https://alvo-autorizado.invalid/" --engagement engagements\programa.json --modules HTTP,TLS,TECHNOLOGY --output reports\programa
+```
+[MEDIUM] WEB-CORS-001-79C2A84A1267: Duas origens arbitrárias refletidas com credenciais permitidas
+[LOW] WEB-COOKIE-002-11F636B3C0A0: Cookie de sessão sessionid sem HttpOnly
+  Confiança: 99% | Prioridade: 8/100
+  Correção: Aplique HttpOnly aos cookies de sessão que não precisam ser acessados por JavaScript.
+[INFORMATIONAL] WEB-COOKIE-003-0829774B45D6: SameSite não declarado no cookie sessionid
+[INFORMATIONAL] WEB-FRAME-001-D9E8E206767C: Restrição de enquadramento não observada
+[INFORMATIONAL] WEB-HEADERS-001-8FC9C311CE41: Defesas adicionais ausentes na resposta HTML
 ```
 
-O domínio acima é ilustrativo: substitua pelo alvo autorizado. A referência registra a declaração do operador; não verifica autorização externa. CORS, portas e identificação ativa de serviços exigem `active_testing=true`. As regras do programa continuam sendo a fonte do escopo.
+That is: two arbitrary origins reflected with credentials allowed (a CORS candidate that still needs impact confirmation), a session cookie without `HttpOnly`, and three informational observations.
 
-## O que funciona
+## Testing an authorized target
 
-- Windows: CPU, memória, armazenamento, processos, interfaces, sockets, serviços, rotas e perfis de firewall.
-- CLI e TUI, com planejamento offline e comandos individuais para DNS, HTTP, TLS, portas e CORS.
-- Escopo real persistido em JSON: domínio, wildcard, URL exata, IP e CIDR; exclusões, janela temporal, portas permitidas e operações.
-- Limites compartilhados de frequência, concorrência e orçamento; HTTPS validado; redirecionamentos verificados; IPs resolvidos excluídos ou locais sem autorização bloqueados.
-- Regras determinísticas para atributos de cookies de sessão, headers, HSTS, enquadramento, certificado TLS inválido e configuração CORS.
-- Achados com evidências, confiança, impacto, justificativa, reprodução, correção, limitações, referências e hashes SHA-256.
-- Relatórios HTML locais sem recursos externos, Markdown para revisão/bug bounty e JSON para reanálise offline.
+```powershell
+.\solomon.cmd pentest init --engagement engagements\program.json --name "My program" --include "https://authorized-target.invalid/" --authorize --authorization-reference "Program policy or written authorization"
+.\solomon.cmd pentest plan "https://authorized-target.invalid/" --engagement engagements\program.json --modules HTTP,TLS,TECHNOLOGY
+.\solomon.cmd pentest scan "https://authorized-target.invalid/" --engagement engagements\program.json --modules HTTP,TLS,TECHNOLOGY --output reports\program
+```
 
-Porta aberta, versão anunciada e resposta inconclusiva não viram vulnerabilidade. Headers ausentes são observações informativas; reflexão CORS é um candidato que ainda exige confirmação do impacto.
+Without `--authorize`, every operation is reported as `BLOCKED_NOT_AUTHORIZED` and no network activity happens. CORS, port and active service identification also require `active_testing=true` in the engagement policy. `plan`, `scope check`, `analyze` and `report` never touch the network.
 
-## Auditoria e relatórios
+## Local audit and reports
 
 ```powershell
 .\solomon.cmd diagnostics
-.\solomon.cmd audit --output reports\auditoria
-.\solomon.cmd pentest status --session "reports\SESS-ID\report.json"
-.\solomon.cmd analyze --input "reports\SESS-ID\report.json" --output reports\reanalisados
-.\solomon.cmd report --input "reports\SESS-ID\report.json" --output reports\exportados
+.\solomon.cmd audit --output reports\audit
+.\solomon.cmd analyze --input "reports\SESS-ID\report.json" --output reports\reanalyzed
+.\solomon.cmd report  --input "reports\SESS-ID\report.json" --output reports\exported
 ```
 
-`analyze`, `report`, `plan` e `scope check` não realizam operações de rede. Arquivos com evidências alteradas são rejeitados na verificação de hashes.
+## Architecture
 
-## Documentação
+```
+src/solomon/
+  core/          domain models, scope, evidence, findings, scoring
+  platform/      OS detection and read-only providers (Windows, Ubuntu)
+  diagnostics/   local collectors (CPU, memory, storage, network, services, firewall...)
+  analysis/      deterministic rules, correlation and health score
+  pentest/       engagement, scope matcher, target guard, transports (DNS/HTTP/TLS/TCP),
+                 recon and discovery modules
+  reporting.py   JSON / HTML / Markdown exporters
+  tui/           Textual interface
+```
 
-- [Instalação e operação no Windows](docs/windows.md)
-- [Pentest e bug bounty](docs/pentest.md)
-- [Catálogo de regras e limites](docs/rules.md)
-- [Modelo de documentação de falhas](docs/bug-bounty-template.md)
-- [Análise do projeto e evolução](docs/project-review.md)
-- [Arquitetura](docs/architecture.md)
-- [Modelo de segurança](docs/security-model.md)
-- [Desenvolvimento e testes](docs/development.md)
-- [Privacidade e preparação do repositório](docs/repository-security.md)
-- [Política de segurança](SECURITY.md)
+All pentest network traffic goes through the transport layer, which enforces the guard, resolved-IP checks, timeouts, budget and secret redaction. Scanners never open sockets directly. See [docs/architecture.md](docs/architecture.md) and [docs/security-model.md](docs/security-model.md).
 
-## Limites atuais
-
-A versão é uma base funcional de avaliação e documentação. Exploração de SQLi/XSS/SSRF, lógica de negócio, autenticação, descoberta em massa, CVE/CVSS automático, coleta de drivers/logs/atualizações/contas e PDF ainda não estão implementados. Hardening, verificação de correções e rollback retornam explicitamente indisponível.
-
-Linux conserva os coletores existentes e o núcleo compartilhado, mas a execução real desta entrega foi validada no Windows 11. A nota 0–100 representa somente as regras e evidências disponíveis; não certifica a segurança geral do alvo.
-
-## Testes
+## Development
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\setup-windows.ps1 -Dev
-.\.venv\Scripts\python.exe -m pytest -q
-.\.venv\Scripts\python.exe -m pytest -q -m integration
+.\.venv\Scripts\python.exe -m pytest -q                  # 88 unit tests, mocked network
+.\.venv\Scripts\python.exe -m pytest -q -m integration   # loopback-only lab
 .\.venv\Scripts\python.exe -m ruff check src tests
 .\.venv\Scripts\python.exe -m mypy src --ignore-missing-imports
 ```
 
-A suíte padrão usa mocks e não testa terceiros. O teste de integração é separado e usa exclusivamente loopback. `requirements-tested.txt` registra as versões diretas verificadas. Ambientes virtuais, relatórios, escopos reais e backups permanecem locais e não são versionados.
+## Current limitations
+
+Version 0.2.0 is a working base for assessment and documentation. Not implemented yet: SQLi/XSS/SSRF exploitation, business logic and authenticated testing, mass discovery, automatic CVE/CVSS, PDF export and hardening (the `harden`, `verify` and `rollback` commands explicitly report as unavailable). Real execution was validated on Windows 11; Linux providers exist but still need validation on a physical host. The 0–100 score reflects only the rules and evidence available and does not certify a target as secure.
+
+## Documentation (Portuguese)
+
+[Windows](docs/windows.md) · [Pentest & bug bounty](docs/pentest.md) · [Rules](docs/rules.md) · [Report template](docs/bug-bounty-template.md) · [Architecture](docs/architecture.md) · [Security model](docs/security-model.md) · [Threat model](docs/threat-model.md) · [Validation](docs/validation.md) · [Roadmap](docs/project-review.md) · [Development](docs/development.md) · [Security policy](SECURITY.md)
+
+## License
+
+[MIT](LICENSE). You are responsible for using this tool only against systems you are authorized to test.

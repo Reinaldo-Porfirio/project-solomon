@@ -37,4 +37,4 @@ O mypy atual verifica o código com imports de bibliotecas sem stubs tolerados. 
 
 ## Organização incremental
 
-Prioridades e critérios da evolução estão em project-review.md. Preserve funcionalidades existentes, atualize documentação da capacidade real e não prometa módulos ainda reservados. A pasta recebida não tinha repositório Git; foi preservado um backup antes da transformação.
+Prioridades e critérios da evolução estão em project-review.md. Preserve funcionalidades existentes, atualize documentação da capacidade real e não prometa módulos ainda reservados.

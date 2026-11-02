@@ -5,14 +5,28 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "solomon"
 version = "0.2.0"
-description = "Cross-Platform System Diagnostics, Security Auditing, Pentesting Support and Safe Hardening Framework."
+description = "Windows-first framework for authorized pentesting, read-only local security audits and evidence-based reports."
 readme = "README.md"
 requires-python = ">=3.12"
+license = { text = "MIT" }
+authors = [{ name = "Reinaldo Porfírio Vieira" }]
+keywords = ["security", "pentest", "audit", "bug-bounty", "windows", "diagnostics"]
+classifiers = [
+    "Programming Language :: Python :: 3.12",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: POSIX :: Linux",
+    "Topic :: Security",
+    "Environment :: Console",
+]
 dependencies = [
     "textual>=8.0,<9",
     "psutil>=7.0,<8",
     "dnspython>=2.8,<3",
 ]
+
+[project.urls]
+Repository = "https://github.com/Reinaldo-Porfirio/project-solomon"
 
 [project.scripts]
 solomon = "solomon.__main__:main"

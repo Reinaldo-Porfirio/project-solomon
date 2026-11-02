@@ -26,4 +26,4 @@ Interrompa o compartilhamento do material, revogue ou substitua a credencial exp
 
 Não habilitar serviços pagos, APIs comerciais, runners com cobrança ou funcionalidades de segurança pagas sem autorização explícita. Este repositório é criado sem workflows de CI e com GitHub Actions desabilitado.
 
-A escolha da licença do projeto permanece pendente antes de uma eventual distribuição pública.
+O projeto é distribuído sob a licença MIT (ver LICENSE). A licença não autoriza testes contra sistemas de terceiros.

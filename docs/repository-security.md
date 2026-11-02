@@ -7,7 +7,7 @@
 - scripts/: instalador Windows.
 - docs/: arquitetura, operação, regras, limites e validação sanitizada.
 - examples/: modelo UNDECLARED com domínios reservados.
-- README.md, SECURITY.md, pyproject.toml e requirements-tested.txt.
+- README.md, README.pt-BR.md, LICENSE, SECURITY.md, pyproject.toml e requirements-tested.txt.
 - solomon.cmd, .gitignore e .gitattributes.
 
 ## O que não é enviado
@@ -35,6 +35,4 @@ O modelo de engagement distribuído está UNDECLARED, não contém um alvo de cl
 
 ## Publicação e custos
 
-O repositório começa privado. Nenhum workflow de GitHub Actions é incluído; Actions é desabilitado para impedir execuções automáticas. Não habilite recursos pagos sem autorização.
-
-Uma futura publicação pública requer nova revisão do conteúdo, do histórico e da licença. A licença não foi escolhida automaticamente nesta preparação.
+O repositório é público sob a licença MIT, após revisão do conteúdo, do histórico e dos metadados de autoria. Nenhum workflow de GitHub Actions é incluído; Actions permanece desabilitado para impedir execuções automáticas. Não habilite recursos pagos sem autorização.
